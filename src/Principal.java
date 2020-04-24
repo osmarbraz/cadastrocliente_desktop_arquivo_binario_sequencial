@@ -2,13 +2,18 @@
 /**
  * Programa que armazena um registro de tamanho fixo em um arquivo binário.
  *
- * Realiza as operações de inclusão, exclusão, pesquisa, posição e listagem dos registros.
+ * Realiza as operações de inclusão, exclusão(lógica e física), alteração, pesquisa, posição e listagem dos registros.
  *
  */
 import javax.swing.JOptionPane;
 
 public class Principal {
 
+    /**
+     * Realiza o preenchimento de um objeto do tipo cliente.
+     * @param mensagem Mensagem inícia antes da leitura.
+     * @return Um objeto preenchido.
+     */
     public static RegistroCliente leitura(String mensagem) {
         //Mostra a mensagem se ela for diferente de vazio
         if (!mensagem.equals("")) {
@@ -24,6 +29,9 @@ public class Principal {
         return cliente;
     }
 
+    /**
+      * Programa principal
+      */
     public static void main(String Arg[]) {
         //Classe que gerencia o arquivo de cliente
         GerenciadorCliente gerente = new GerenciadorCliente();
@@ -71,38 +79,48 @@ public class Principal {
                 case 3: {
                     //Pergunta qual o código a ser excluído logicamente
                     int codigoExcluir = Integer.parseInt(JOptionPane.showInputDialog(" Digite o codigo a ser excluído: "));
-                    gerente.excluirLogico(codigoExcluir);
+                    //Excluí o registro com o código especificado                    
+                    if (gerente.excluirLogico(codigoExcluir) == true) {
+                        JOptionPane.showMessageDialog(null, "Registro " + codigoExcluir + " excluído com sucesso.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Registro " + codigoExcluir + " não foi excluído.");
+                    }
                     break;
                 }
                 case 4: {
                     //Pergunta qual o código a ser excluído fisicamente
                     int codigoExcluir = Integer.parseInt(JOptionPane.showInputDialog(" Digite o codigo a ser excluído: "));
-                    gerente.excluirFisico(codigoExcluir);
+                    //Excluí o registro com o código especificado                    
+                    if (gerente.excluirFisico(codigoExcluir) == true) {
+                        JOptionPane.showMessageDialog(null, "Registro " + codigoExcluir + " excluído com sucesso.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Registro " + codigoExcluir + " não foi excluído.");
+                    }
                     break;
                 }
                 case 5: {
                     // Pergunta qual a chave do cliente deve ser procurada no arquivo
-                    int chave = Integer.parseInt(JOptionPane.showInputDialog(" Digite o código do cliente a ser perquisado: "));
+                    int chave = Integer.parseInt(JOptionPane.showInputDialog(" Digite o código a ser perquisado: "));
                     // Procura o registro do cliente com a chave no arquivo
-                    RegistroCliente cliente = gerente.pesquisar(chave);
+                    RegistroCliente cliente = gerente.pesquisarRegistro(chave);
                     // Se cliente != null encontrou o registro
                     if (cliente != null) {
-                        JOptionPane.showMessageDialog(null, "Achei o cliente \n" + cliente.toString());
+                        JOptionPane.showMessageDialog(null, "Achei o registro \n" + cliente.toString());
                     } else {
-                        JOptionPane.showMessageDialog(null, "Não Achei");
+                        JOptionPane.showMessageDialog(null, "Não Achei o registro com a chave " + chave);
                     }
                     break;
                 }
                 case 6: {
                     // Pergunta qual a chave do cliente deve ser procurada sua posição no arquivo
-                    int chave = Integer.parseInt(JOptionPane.showInputDialog(" Digite o código do cliente a ser procurado a posição: "));
+                    int chave = Integer.parseInt(JOptionPane.showInputDialog(" Digite o código ser procurado a posição: "));
                     // Procura a posição do registro com chave no arquivo
-                    int posicao = gerente.posicao(chave);
+                    int posicao = gerente.posicaoRegistro(chave);
                     //Se posição é -1 não encontrou
                     if (posicao != -1) {
-                        JOptionPane.showMessageDialog(null, "Achei o cliente na posição " + (posicao + 1));
+                        JOptionPane.showMessageDialog(null, "Achei o registro na posição " + (posicao + 1));
                     } else {
-                        JOptionPane.showMessageDialog(null, "Não Achei");
+                        JOptionPane.showMessageDialog(null, "Não Achei o registro com a chave " + chave);
                     }
                     break;
                 }

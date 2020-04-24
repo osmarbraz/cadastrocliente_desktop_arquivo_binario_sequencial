@@ -108,6 +108,6 @@ public class RegistroCliente extends Cliente {
         // nome String = 30 caracteres = 1 caracter ocupada 2 bytes = 60 bytes
         // cpf String = 11 caracteres = 1 caracter ocupada 2 bytes = 22 bytes        
         //Total 106 bytes
-        return (4 + (2 * 30) + (2 * 11));
+        return (4 + (2 *30) + (2 * 11));
     }
 }

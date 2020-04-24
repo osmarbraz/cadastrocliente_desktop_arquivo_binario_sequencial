@@ -19,6 +19,7 @@ public class GerenciadorCliente {
      * Abre o arquivo com o nome default ao inicializar a classe.
      */
     public GerenciadorCliente() {
+        //Nome do arquivo binário
         setNomeArquivo("CLIENTE.DAT");
         abrirArquivo();
     }
@@ -95,6 +96,7 @@ public class GerenciadorCliente {
             arquivo.seek(arquivo.length());
             //Escreve o registro no arquivo
             registro.escrita(arquivo);
+            //Conseguiu realizar a inclusão
             return true;
         } catch (IOException io) {
             System.out.println("Problemas ao manipular o arquivo: " + io);
@@ -105,15 +107,14 @@ public class GerenciadorCliente {
     /**
      * Retorno o próximo código de cliente.
      *
-     * Retorna o próximo código de cliente.
+     * Retorna o próximo código de cliente. Pocura pelo maior e incrementa em 1.
      *
      * @return Uma String com os dados do arquivo.
      */
     public int proximoCodigo() {
+        //Retorna o próximo código disponível
         int proximo = -1;
 
-        //Variável para concatenar os dados
-        String linha = "";
         //Instancia um registro para armazenar os dados lido do arquivo.
         RegistroCliente registro = new RegistroCliente();
         try {
@@ -219,8 +220,11 @@ public class GerenciadorCliente {
             while (getArquivo().getFilePointer() < getArquivo().length()) {
                 //Realiza a leitura de um registro do arquivo
                 registro.leitura(arquivo);
-                //Incrementa o contador de registro.
-                contador = contador + 1;
+                //Somente para os registros não apagados                
+                if (registro.getCodigo() != -1) {
+                    //Incrementa o contador de registro.
+                    contador = contador + 1;
+                }
             }
         } catch (IOException io) {
             System.out.println("Problemas ao manipular o arquivo: " + io);
@@ -237,7 +241,10 @@ public class GerenciadorCliente {
         String informacoes = "";
         try {
             //Concatena as informações do arquivo
-            informacoes = "Tamanho do Arquivo : " + arquivo.length() + " Kb " + "\n Número de Registros : " + getQuantidadeRegistro();
+            RegistroCliente cliente = new RegistroCliente();
+            informacoes = "Tamanho do Arquivo : " + arquivo.length() + " Kb " 
+                        + "\n Número de Registros : " + getQuantidadeRegistro() 
+                        + "\nCada regitro possui : "  + cliente.getTamanhoRegistro() + " Kb ";
         } catch (IOException io) {
             System.out.println("Problemas ao manipular o arquivo: " + io);
         }
@@ -255,7 +262,7 @@ public class GerenciadorCliente {
     public boolean atualizarArquivo(int chave, RegistroCliente cliente) {
         try {
             //Pega a posição do registro com a chave a ser alterada
-            int posicao = posicao(chave);
+            int posicao = posicaoRegistro(chave);
             if (posicao != -1) {
                 //Atribui o novo registro a ser salvo
                 RegistroCliente registro = cliente;
@@ -281,15 +288,17 @@ public class GerenciadorCliente {
      *
      * @param chave Valor a ser procurado.
      *
-     * @return Um valor com a posição do registro que tem a chave.
+     * @return Um valor com a posição do registro que tem a chave. Se não encontrar posição retorna -1.
      */
-    public int posicao(int chave) {
+    public int posicaoRegistro(int chave) {
+        //Guarda a posição da parada da procura
         int posicao = -1;
         //Instancia um registro para armazenar os dados lido do arquivo.
         RegistroCliente registro = new RegistroCliente();
         try {
             //Posiciona no início do arquivo
             arquivo.seek(0);
+            //Utilizado para interroper o laço da leitura do arquivo
             boolean achei = false;
             //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo e não achei
             while ((getArquivo().getFilePointer() < getArquivo().length()) && (achei == false)) {
@@ -307,6 +316,7 @@ public class GerenciadorCliente {
                 //Retorna a posição encontrada
                 return posicao;
             } else {
+                //Não conseguiu encontrar o registro
                 return -1;
             }
         } catch (EOFException eof) {
@@ -327,27 +337,36 @@ public class GerenciadorCliente {
      * @return Verdadeiro ou falso se conseguiu excluir logicamente o registro.
      */
     public boolean excluirLogico(int chave) {
+        //Guarda a posição da parada da procura
         int posicao = -1;
         //Instancia um registro para armazenar os dados lido do arquivo.
         RegistroCliente registro = new RegistroCliente();
         try {
-            //Posiciona no inicio do arquivo
+            //posiciona no inicio do arquivo
             arquivo.seek(0);
+            //Utilizado para interroper o laço da leitura do arquivo
             boolean achei = false;
             //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo e não achei
             while ((getArquivo().getFilePointer() < getArquivo().length()) && (achei == false)) {
                 registro.leitura(arquivo);
+                //Encerra a procura se encontrei a chave
                 if (registro.getCodigo() == chave) {
                     achei = true;
                 }
+                //Incrementa o contador de posições
                 posicao = posicao + 1;
             }
+            //Se encontrou o registro realiza a exclusão
             if (achei == true) {
+                //Altera o registro a ser excluído
                 registro.setCodigo(-1);
+                ////Posiciona no registro a ser alterado
                 arquivo.seek(posicao * registro.getTamanhoRegistro());
+                //Escreve o registro alterado no arquivo
                 registro.escrita(arquivo);
                 return true;
             } else {
+                //Não conseguiu encontrar o registro
                 return false;
             }
         } catch (EOFException eof) {
@@ -363,7 +382,7 @@ public class GerenciadorCliente {
      *
      * @param chave Valor da chave do registro a ser excluído.
      */
-    public void excluirFisico(int chave) {
+    public boolean excluirFisico(int chave) {
         //Instancia um registro para armazenar os dados lido do arquivo.
         RegistroCliente registro = new RegistroCliente();
         try {
@@ -423,11 +442,13 @@ public class GerenciadorCliente {
             arquivoTemp.close();
             // Apaga o arquivo temporário
             fileArquivoTemp.delete();
+            return true;
         } catch (EOFException eof) {
             System.out.println("Chegou ao final do arquivo: " + eof);
         } catch (IOException io) {
             System.out.println("Problemas ao manipular o arquivo: " + io);
         }
+        return false;
     }
 
     /**
@@ -437,7 +458,7 @@ public class GerenciadorCliente {
      *
      * @return Retorna o registro encontrado no arquivo.
      */
-    public RegistroCliente pesquisar(int chave) {
+    public RegistroCliente pesquisarRegistro(int chave) {
         //Objeto de retorno do método
         RegistroCliente retorno = null;
         //Registro a ser utilizado para ler o arquivo
@@ -445,17 +466,26 @@ public class GerenciadorCliente {
         try {
             //Posiciona no início do arquivo
             arquivo.seek(0);
+            //Utilizado para interroper o laço da leitura do arquivo
+             boolean achei = false;            
             //Realiza a leitura do primeiro registro do arquivo
             registro.leitura(arquivo);
             //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo ou diferente da chave
-            while ((getArquivo().getFilePointer() < getArquivo().length()) && (registro.getCodigo() != chave)) {
+            while ((getArquivo().getFilePointer() < getArquivo().length()) && (achei == false)) {
                 //Realiza a leitura de um registro do arquivo
                 registro.leitura(arquivo);
+                //Encerra a procura se encontrei a chave
+                if (registro.getCodigo() == chave) {
+                    achei = true;
+                }
             }
             //Verifica se é igual a chave
-            if (registro.getCodigo() == chave) {
-                //Guarda o registro encontrado para retornar
-                retorno = registro;
+            if (achei == true) {
+                //retorna o registro encontrado
+                return registro;
+            } else {
+                //retorna o registro de não encontrado
+                return retorno;
             }
         } catch (EOFException eof) {
             System.out.println("Chegou ao final do arquivo: " + eof);
