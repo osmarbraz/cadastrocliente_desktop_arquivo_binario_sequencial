@@ -242,9 +242,9 @@ public class GerenciadorCliente {
         try {
             //Concatena as informações do arquivo
             RegistroCliente cliente = new RegistroCliente();
-            informacoes = "Tamanho do Arquivo : " + arquivo.length() + " Kb " 
-                        + "\n Número de Registros : " + getQuantidadeRegistro() 
-                        + "\nCada regitro possui : "  + cliente.getTamanhoRegistro() + " Kb ";
+            informacoes = "Tamanho do Arquivo : " + arquivo.length() + " Kb "
+                    + "\n Número de Registros : " + getQuantidadeRegistro()
+                    + "\nCada regitro possui : " + cliente.getTamanhoRegistro() + " Kb ";
         } catch (IOException io) {
             System.out.println("Problemas ao manipular o arquivo: " + io);
         }
@@ -288,7 +288,8 @@ public class GerenciadorCliente {
      *
      * @param chave Valor a ser procurado.
      *
-     * @return Um valor com a posição do registro que tem a chave. Se não encontrar posição retorna -1.
+     * @return Um valor com a posição do registro que tem a chave. Se não
+     * encontrar posição retorna -1.
      */
     public int posicaoRegistro(int chave) {
         //Guarda a posição da parada da procura
@@ -380,12 +381,20 @@ public class GerenciadorCliente {
     /**
      * Excluí fisicamente um registro do arquivo.
      *
+     * Cria um arquivo temporário para receber os registros menos o que deve ser
+     * excluído. Apaga o arquivo principal e renomeia o arquivo temporário para
+     * principal.
+     *
      * @param chave Valor da chave do registro a ser excluído.
+     * 
+     * @return Verdadeiro ou falso se conseguiu excluir fisicamente o registro.
      */
     public boolean excluirFisico(int chave) {
         //Instancia um registro para armazenar os dados lido do arquivo.
         RegistroCliente registro = new RegistroCliente();
         try {
+            //Copia os dados do arquivo principal para o arquivo temporário
+
             //Retorna o nome do arquivo até o ponto
             String nomeArquivoTemp = getNomeArquivo().substring(0, getNomeArquivo().indexOf("."));
             //Adiciona a extensão tmp ao nome do arquivo temporpario
@@ -404,12 +413,15 @@ public class GerenciadorCliente {
                 while ((getArquivo().getFilePointer() < getArquivo().length())) {
                     //Realiza a leitura do registro
                     registro.leitura(arquivo);
-                    //Copia todos os registros menos a chave
-                    if (registro.getCodigo() != chave) {
-                        //Posiciona o arquivo temporário no final
-                        arquivoTemp.seek(arquivoTemp.length());
-                        //Escreve o registro no arquivo temporário
-                        registro.escrita(arquivoTemp);
+                    //Utiliza somente valores chave diferente de -1
+                    if (registro.getCodigo() != -1) {
+                        //Copia todos os registros menos a chave
+                        if (registro.getCodigo() != chave) {
+                            //Posiciona o arquivo temporário no final
+                            arquivoTemp.seek(arquivoTemp.length());
+                            //Escreve o registro no arquivo temporário
+                            registro.escrita(arquivoTemp);
+                        }
                     }
                 }
             } catch (EOFException eof) {
@@ -417,6 +429,8 @@ public class GerenciadorCliente {
             } catch (IOException io) {
                 System.out.println("Problemas ao manipular o arquivo: " + io);
             }
+
+            //Copia os dados do arquivo temporário para o arquivo principal
             // Apaga o arquivo original
             arquivo.setLength(0);
             try {
@@ -424,7 +438,7 @@ public class GerenciadorCliente {
                 arquivoTemp.seek(0);
                 //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo
                 while ((arquivoTemp.getFilePointer() < arquivoTemp.length())) {
-                    //Realiza a leitura de um registro do arquivo
+                    //Realiza a leitura de um registro do arquivo temporário
                     registro.leitura(arquivoTemp);
                     //Posiciona no final do arquivo
                     arquivo.seek(arquivo.length());
@@ -467,7 +481,7 @@ public class GerenciadorCliente {
             //Posiciona no início do arquivo
             arquivo.seek(0);
             //Utilizado para interroper o laço da leitura do arquivo
-             boolean achei = false;            
+            boolean achei = false;
             //Realiza a leitura do primeiro registro do arquivo
             registro.leitura(arquivo);
             //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo ou diferente da chave
