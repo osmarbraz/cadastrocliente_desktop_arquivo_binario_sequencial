@@ -508,6 +508,50 @@ public class GerenciadorCliente {
         }
         return retorno;
     }
+    
+    /**
+     * Pesquisa um nome no arquivo retornando o registro.
+     *
+     * @param chave Valor chave a se pesquisado no arquivo.
+     *
+     * @return Retorna o registro encontrado no arquivo.
+     */
+    public RegistroCliente pesquisarRegistroNome(String chave) {
+        //Objeto de retorno do método
+        RegistroCliente retorno = null;
+        //Registro a ser utilizado para ler o arquivo
+        RegistroCliente registro = new RegistroCliente();
+        try {
+            //Posiciona no início do arquivo
+            arquivo.seek(0);
+            //Utilizado para interroper o laço da leitura do arquivo
+            boolean achei = false;
+            //Realiza a leitura do primeiro registro do arquivo
+            registro.leitura(arquivo);
+            //Enquanto o ponteiro de leitura for menor que o tamanho do arquivo ou diferente da chave
+            while ((getArquivo().getFilePointer() < getArquivo().length()) && (achei == false)) {
+                //Realiza a leitura de um registro do arquivo
+                registro.leitura(arquivo);
+                //Encerra a procura se encontrei a chave
+                if (registro.getNome().equals(chave)) {
+                    achei = true;
+                }
+            }
+            //Verifica se é igual a chave
+            if (achei == true) {
+                //retorna o registro encontrado
+                return registro;
+            } else {
+                //retorna o registro de não encontrado
+                return retorno;
+            }
+        } catch (EOFException eof) {
+            System.out.println("Chegou ao final do arquivo: " + eof);
+        } catch (IOException io) {
+            System.out.println("Problemas ao manipular o arquivo: " + io);
+        }
+        return retorno;
+    }
 
     /**
      * Apaga os registro do arquivo.

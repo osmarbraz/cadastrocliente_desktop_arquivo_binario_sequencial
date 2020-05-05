@@ -1,5 +1,6 @@
 # Sistema de Cadastro de Clientes para Desktop utilizando Arquivo Binário Sequencial.
 
+## Características:<br>
 - Utiliza um arquivo binário manipulado pela classe RandomAcessFile.<br>
 - Os registros são armazenados de forma sequencial.<br>
 - A iteração com o usuário é através de JOptionPane.<br>
@@ -7,14 +8,17 @@
 - Toda iteração com o arquivo binário é tratada diretamente na classe GerenciadorCliente.<br>
 - A pasta src contêm os fontes do projeto.<br>
 - O arquivo de dados é gerado na raiz do projeto.<br>
-- Operações disponíveis:<br>
+
+## Operações disponíveis:<br>
  - Incluir<br>
+ - Incluir com verificação<br>
  - Atualizar<br>
  - Excluir Lógico<br>
  - Excluir Físico<br>
  - Pesquisar Chave<br>
  - Pesquisar Posição<br>
+ - Pesquisar Nome<br>
  - Listar Lógico<br>
  - Listar Físico<br>
  - Informações<br>
- - Zera Arquivo<br>
+ - Zerar Arquivo<br>
