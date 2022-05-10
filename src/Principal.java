@@ -78,7 +78,7 @@ public class Principal {
                         cliente.setCodigo(Integer.parseInt(JOptionPane.showInputDialog("Este código já existe digite um novo código para o cliente ou -2 para sair:")));
                         // Procura a posição do registro com o código no arquivo
                         posicao = gerente.posicaoRegistro(cliente.getCodigo());
-                    }                    
+                    }
                     //Se código diferente de -2 realiza a a inclusão
                     if (cliente.getCodigo() != -2) {
                         if (gerente.inserirFimArquivo(cliente) == true) {

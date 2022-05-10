@@ -386,7 +386,7 @@ public class GerenciadorCliente {
      * principal.
      *
      * @param chave Valor da chave do registro a ser excluído.
-     * 
+     *
      * @return Verdadeiro ou falso se conseguiu excluir fisicamente o registro.
      */
     public boolean excluirFisico(int chave) {
@@ -508,7 +508,7 @@ public class GerenciadorCliente {
         }
         return retorno;
     }
-    
+
     /**
      * Pesquisa um nome no arquivo retornando o registro.
      *
